@@ -4,19 +4,15 @@ struct TweakDefinition: Identifiable, Hashable {
     let id: String
     let title: String
     let key: String
-    let enabledByDefault: Bool
 
-    init(_ id: String, _ title: String, _ key: String, enabledByDefault: Bool = false) {
+    init(_ id: String, _ title: String, _ key: String) {
         self.id = id
         self.title = title
         self.key = key
-        self.enabledByDefault = enabledByDefault
     }
 }
 
 enum SpringBoardTweaks {
-    static let targetDirectory = "/var/Managed Preferences/mobile"
-
     static let all: [TweakDefinition] = [
         TweakDefinition("lowBattery", "Disable Low Battery Alerts", "SBHideLowPowerAlerts"),
         TweakDefinition("acPower", "Hide AC Power on Lock Screen", "SBHideACPower"),
