@@ -23,18 +23,46 @@ final class SpringBoardEngine: ObservableObject {
         values[tweak.id] ?? false
     }
 
-    func makePlist(for tweak: TweakDefinition) -> Data? {
-        try? PropertyListSerialization.data(
-            fromPropertyList: [tweak.key: isEnabled(tweak)],
+    func payload() throws -> Data {
+        var plist: [String: Bool] = [:]
+        for tweak in SpringBoardTweaks.all {
+            plist[tweak.key] = isEnabled(tweak)
+        }
+        return try PropertyListSerialization.data(
+            fromPropertyList: plist,
             format: .binary,
             options: 0
         )
     }
 
-    func apply(_ tweak: TweakDefinition) {
+    func applyPreparedChanges() async {
         guard !applying else { return }
         applying = true
         defer { applying = false }
-        message = "Prepared (tweak.title)."
+
+        do {
+            let data = try payload()
+            try await AirLiftBridge.shared.write(
+                data: data,
+                fileName: "com.apple.springboard.plist",
+                destination: AppConfig.springBoardPreferences
+            )
+            message = "Changes applied. Respring to finish."
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    func respring() async {
+        guard !applying else { return }
+        applying = true
+        defer { applying = false }
+
+        do {
+            try await AirLiftBridge.shared.respring()
+            message = "Respring requested."
+        } catch {
+            message = error.localizedDescription
+        }
     }
 }
