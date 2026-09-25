@@ -21,13 +21,9 @@ targets:
     platform: iOS
     sources:
       - path: X
-    dependencies:
-      - framework: AirliftFFI.xcframework
-        embed: false
     settings:
       base:
         PRODUCT_NAME: X
         PRODUCT_BUNDLE_IDENTIFIER: com.x.tweaker
         INFOPLIST_FILE: X/Info.plist
         GENERATE_INFOPLIST_FILE: NO
-        OTHER_LDFLAGS: "-lc++"
