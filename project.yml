@@ -1,0 +1,33 @@
+name: X
+options:
+  bundleIdPrefix: com.x
+  deploymentTarget:
+    iOS: "27.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+    EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+
+targets:
+  X:
+    type: application
+    platform: iOS
+    sources:
+      - path: X
+    dependencies:
+      - framework: AirliftFFI.xcframework
+        embed: false
+    settings:
+      base:
+        PRODUCT_NAME: X
+        PRODUCT_BUNDLE_IDENTIFIER: com.x.tweaker
+        INFOPLIST_FILE: X/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        OTHER_LDFLAGS: "-lc++"
