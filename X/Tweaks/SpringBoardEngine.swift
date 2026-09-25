@@ -25,6 +25,7 @@ final class SpringBoardEngine: ObservableObject {
 
     func payload() throws -> Data {
         var plist: [String: Bool] = [:]
+
         for tweak in SpringBoardTweaks.all {
             plist[tweak.key] = isEnabled(tweak)
         }
@@ -43,12 +44,14 @@ final class SpringBoardEngine: ObservableObject {
 
         do {
             let data = try payload()
+
             try await AirLiftBridge.shared.write(
                 data: data,
                 fileName: "com.apple.springboard.plist",
                 destination: AppConfig.springBoardPreferences
             )
-            message = "Payload exported to X-Payloads."
+
+            message = "Payload prepared successfully. The privileged write backend is not included in this build."
         } catch {
             message = error.localizedDescription
         }
