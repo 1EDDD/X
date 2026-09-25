@@ -28,6 +28,7 @@ final class SpringBoardEngine: ObservableObject {
         for tweak in SpringBoardTweaks.all {
             plist[tweak.key] = isEnabled(tweak)
         }
+
         return try PropertyListSerialization.data(
             fromPropertyList: plist,
             format: .binary,
@@ -47,7 +48,7 @@ final class SpringBoardEngine: ObservableObject {
                 fileName: "com.apple.springboard.plist",
                 destination: AppConfig.springBoardPreferences
             )
-            message = "Changes applied. Respring to finish."
+            message = "Payload exported to X-Payloads."
         } catch {
             message = error.localizedDescription
         }
