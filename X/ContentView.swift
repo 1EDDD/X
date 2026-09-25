@@ -14,7 +14,6 @@ struct ContentView: View {
                                 .font(.headline)
                             Text(pairing.status)
                                 .foregroundStyle(.secondary)
-                                .font(.subheadline)
                         }
 
                         Spacer()
@@ -30,7 +29,7 @@ struct ContentView: View {
                     }
 
                     if let pin = pairing.pin {
-                        Text("PIN: (pin)")
+                        Text(pin)
                             .font(.system(.title2, design: .monospaced))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
@@ -39,28 +38,22 @@ struct ContentView: View {
 
                 Section("SpringBoard") {
                     ForEach(SpringBoardTweaks.all) { tweak in
-                        Toggle(isOn: Binding(
-                            get: { engine.isEnabled(tweak) },
-                            set: { engine.set(tweak, enabled: $0) }
-                        )) {
-                            Text(tweak.title)
-                        }
-                        .disabled(pairing.pairingPath == nil || engine.applying)
+                        Toggle(
+                            tweak.title,
+                            isOn: Binding(
+                                get: { engine.isEnabled(tweak) },
+                                set: { engine.set(tweak, enabled: $0) }
+                            )
+                        )
+                        .disabled(pairing.pairingPath == nil)
                     }
                 }
 
                 Section {
-                    Button {
-                        Task { await engine.applyAll() }
-                    } label: {
-                        Label("Apply Changes", systemImage: "checkmark.circle.fill")
-                    }
-                    .disabled(pairing.pairingPath == nil || engine.applying)
-
-                    Button {
-                        Task { await engine.respring() }
-                    } label: {
-                        Label("Respring", systemImage: "arrow.clockwise")
+                    Button("Prepare Changes") {
+                        for tweak in SpringBoardTweaks.all where engine.isEnabled(tweak) {
+                            engine.apply(tweak)
+                        }
                     }
                     .disabled(pairing.pairingPath == nil || engine.applying)
                 }
