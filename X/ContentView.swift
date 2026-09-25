@@ -9,10 +9,12 @@ struct ContentView: View {
             List {
                 Section {
                     HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Device")
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("X")
                                 .font(.headline)
+
                             Text(pairing.status)
+                                .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
 
@@ -29,10 +31,16 @@ struct ContentView: View {
                     }
 
                     if let pin = pairing.pin {
-                        Text(pin)
-                            .font(.system(.title2, design: .monospaced))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
+                        VStack(spacing: 5) {
+                            Text("PIN")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            Text(pin)
+                                .font(.system(.title2, design: .monospaced))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
                     }
                 }
 
@@ -50,12 +58,20 @@ struct ContentView: View {
                 }
 
                 Section {
-                    Button("Prepare Changes") {
+                    Button {
                         for tweak in SpringBoardTweaks.all where engine.isEnabled(tweak) {
                             engine.apply(tweak)
                         }
+                    } label: {
+                        Label("Prepare Changes", systemImage: "slider.horizontal.3")
                     }
                     .disabled(pairing.pairingPath == nil || engine.applying)
+
+                    if pairing.running {
+                        Button("Cancel Pairing", role: .destructive) {
+                            pairing.cancel()
+                        }
+                    }
                 }
 
                 if !engine.message.isEmpty {
