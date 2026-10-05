@@ -2,6 +2,9 @@ name: Build SpotifyLocalFiles
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "spotify-local-files/**"
   push:
     paths:
       - "spotify-local-files/**"
