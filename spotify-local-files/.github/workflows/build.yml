@@ -1,0 +1,30 @@
+name: Build SpotifyLocalFiles
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "spotify-local-files/**"
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Theos
+        run: |
+          git clone --recursive https://github.com/theos/theos.git "$HOME/theos"
+          echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
+
+      - name: Build package
+        working-directory: spotify-local-files
+        run: make package FINALPACKAGE=1
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: SpotifyLocalFiles
+          path: spotify-local-files/packages/*
