@@ -40,6 +40,7 @@ jobs:
       - name: Compile Rust Core and Generate Framework
         run: |
           set -euo pipefail
+          export DEVELOPER_DIR="$(xcode-select -p)"
           chmod +x build-ios.sh
           ./build-ios.sh
 
@@ -50,7 +51,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ ! -d "AirliftFFI.xcframework" ]; then
-            echo "::error::AirliftFFI.xcframework is missing from the repository root. PairingController.swift() imports AirliftFFI, so Swift cannot compile until the matching framework is supplied."
+            echo "::error::AirliftFFI.xcframework is missing from the repository root. PairingController.swift imports AirliftFFI, so Swift cannot compile until the matching framework is supplied."
             echo "Expected path: AirliftFFI.xcframework"
             exit 1
           fi
