@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - "X/**"
+      - "rust-core/**"
+      - "AirliftFFI.xcframework/**"
       - "project.yml"
       - ".github/workflows/build-unsigned-ipa.yml"
 
