@@ -21,6 +21,9 @@ targets:
     platform: iOS
     sources:
       - path: X
+    dependencies:
+      - framework: AirliftFFI.xcframework
+        embed: false
     settings:
       base:
         PRODUCT_NAME: X
