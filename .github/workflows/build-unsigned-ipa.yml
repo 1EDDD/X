@@ -14,18 +14,38 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: xcode-27
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode
+      - name: Select Xcode and verify iOS SDK
         run: |
+          set -euo pipefail
           xcodebuild -version
           xcrun --sdk iphoneos --show-sdk-version
+          SDK_VERSION="$(xcrun --sdk iphoneos --show-sdk-version)"
+          SDK_MAJOR="${SDK_VERSION%%.*}"
+          if [ "$SDK_MAJOR" -lt 27 ]; then
+            echo "::error::This project targets iOS 27, but the selected Xcode provides iOS SDK ${SDK_VERSION}. Use the xcode-27 runner."
+            exit 1
+          fi
 
       - name: Install XcodeGen
         run: brew install xcodegen
+
+      - name: Verify required source dependencies
+        run: |
+          set -euo pipefail
+          if [ ! -d "AirliftFFI.xcframework" ]; then
+            echo "::error::AirliftFFI.xcframework is missing from the repository root. PairingController.swift imports AirliftFFI, so Swift cannot compile until the matching framework is supplied."
+            echo "Expected path: AirliftFFI.xcframework"
+            exit 1
+          fi
+          if [ ! -f "AirliftFFI.xcframework/Info.plist" ]; then
+            echo "::error::AirliftFFI.xcframework is present but its Info.plist is missing."
+            exit 1
+          fi
 
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
