@@ -1,7 +1,12 @@
+#if canImport(AirliftFFI)
+import AirliftFFI
+#else
+#error("AirliftFFI.xcframework is required. Add the matching framework at the repository root and declare it in project.yml.")
+#endif
+
 import Foundation
 import Network
 import AVFAudio
-import AirliftFFI
 
 @MainActor
 final class PairingController: ObservableObject {
